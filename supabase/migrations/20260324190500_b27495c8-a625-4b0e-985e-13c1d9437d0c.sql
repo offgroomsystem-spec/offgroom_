@@ -1,0 +1,1 @@
+ALTER TABLE public.pets ADD COLUMN whatsapp_ativo boolean NOT NULL DEFAULT true;

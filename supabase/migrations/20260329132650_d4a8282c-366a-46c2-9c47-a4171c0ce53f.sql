@@ -1,0 +1,1 @@
+ALTER TABLE public.empresa_config ADD COLUMN creche_ativa boolean NOT NULL DEFAULT false;

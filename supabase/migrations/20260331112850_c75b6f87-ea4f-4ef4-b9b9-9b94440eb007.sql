@@ -1,0 +1,1 @@
+ALTER TABLE public.empresa_config ADD COLUMN risco_auto_send boolean NOT NULL DEFAULT true;

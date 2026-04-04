@@ -1,0 +1,1 @@
+ALTER TABLE public.servicos_creche ADD COLUMN modelo_cobranca text NOT NULL DEFAULT 'periodo';

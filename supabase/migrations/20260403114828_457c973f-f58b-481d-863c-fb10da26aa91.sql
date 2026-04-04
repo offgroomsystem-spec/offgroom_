@@ -1,0 +1,1 @@
+ALTER TABLE public.empresa_config ADD COLUMN IF NOT EXISTS horario_checkin_creche text DEFAULT NULL, ADD COLUMN IF NOT EXISTS horario_checkout_creche text DEFAULT NULL;

@@ -1,0 +1,22 @@
+project_id = "etqxzujphligtsvehxoj"
+
+[functions.manage-staff-user]
+verify_jwt = true
+
+[functions.check-subscription-status]
+verify_jwt = true
+
+[functions.create-checkout]
+verify_jwt = true
+
+[functions.public-signup]
+verify_jwt = false
+
+[functions.evolution-api]
+verify_jwt = false
+
+[functions.whatsapp-risco-scheduler]
+verify_jwt = false
+
+[functions.whatsapp-scheduler]
+verify_jwt = false

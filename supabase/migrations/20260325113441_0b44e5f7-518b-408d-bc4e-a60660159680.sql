@@ -1,0 +1,1 @@
+ALTER TABLE public.whatsapp_mensagens_risco ADD COLUMN IF NOT EXISTS tentativa integer NOT NULL DEFAULT 1;

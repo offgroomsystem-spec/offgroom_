@@ -1,0 +1,1 @@
+ALTER TABLE public.formas_pagamento ALTER COLUMN dias TYPE text USING dias::text;

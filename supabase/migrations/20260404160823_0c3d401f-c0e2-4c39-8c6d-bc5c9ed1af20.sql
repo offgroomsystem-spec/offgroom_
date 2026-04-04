@@ -1,0 +1,1 @@
+ALTER TABLE public.comissoes_config ADD COLUMN IF NOT EXISTS tipos_comissao_groomers jsonb NOT NULL DEFAULT '{}'::jsonb;

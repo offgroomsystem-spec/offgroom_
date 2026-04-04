@@ -1,0 +1,1 @@
+DELETE FROM whatsapp_mensagens_agendadas WHERE tipo_mensagem = '15h' AND status = 'pendente';

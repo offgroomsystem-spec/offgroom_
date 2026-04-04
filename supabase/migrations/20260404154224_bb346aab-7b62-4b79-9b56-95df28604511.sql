@@ -1,0 +1,1 @@
+ALTER TABLE public.comissoes_config ADD COLUMN tipo_comissao text NOT NULL DEFAULT 'servicos_e_vendas';

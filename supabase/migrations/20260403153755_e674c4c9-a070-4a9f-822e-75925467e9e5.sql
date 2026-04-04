@@ -1,0 +1,1 @@
+ALTER TABLE public.creche_estadias ADD COLUMN servicos_extras jsonb DEFAULT '[]'::jsonb;
