@@ -115,6 +115,66 @@ serve(async (req) => {
       }
     };
 
+    const checkLocalSubscriptionFallback = async () => {
+      try {
+        const { data: localSubscription, error: localSubscriptionError } = await supabaseClient
+          .from('subscriptions')
+          .select('stripe_product_id, plan_name, subscription_end, subscription_start, status, is_active, customer_email')
+          .eq('user_id', profileId)
+          .not('subscription_end', 'is', null)
+          .order('subscription_end', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (localSubscriptionError) {
+          logStep("Warning: Failed to load local subscription fallback", { error: localSubscriptionError.message });
+          return null;
+        }
+
+        if (!localSubscription?.subscription_end) {
+          logStep("No local subscription fallback found", { profileId, emailToCheck });
+          return null;
+        }
+
+        const subscriptionEnd = new Date(localSubscription.subscription_end);
+        const now = Date.now();
+        const daysRemaining = Math.ceil((subscriptionEnd.getTime() - now) / (1000 * 60 * 60 * 24));
+
+        if (subscriptionEnd.getTime() <= now) {
+          logStep("Local subscription fallback found but expired", {
+            profileId,
+            subscriptionEnd: localSubscription.subscription_end,
+            status: localSubscription.status
+          });
+          return null;
+        }
+
+        logStep("✅ LOCAL SUBSCRIPTION FALLBACK - ACCESS GRANTED", {
+          profileId,
+          planName: localSubscription.plan_name,
+          stripeProductId: localSubscription.stripe_product_id,
+          daysRemaining,
+          subscriptionEnd: localSubscription.subscription_end
+        });
+
+        await updateProfileStatus(localSubscription.plan_name, 'Sim');
+
+        return new Response(JSON.stringify({
+          hasAccess: true,
+          type: 'subscription_fallback',
+          productId: localSubscription.stripe_product_id,
+          productName: localSubscription.plan_name,
+          daysRemaining: Math.max(0, daysRemaining),
+          subscriptionEnd: subscriptionEnd.toISOString(),
+          message: 'Bem vindo(a) ao Offgroom!'
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 });
+      } catch (fallbackError) {
+        const errorMsg = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
+        logStep("Warning: Local subscription fallback failed", { error: errorMsg });
+        return null;
+      }
+    };
+
     // 1️⃣ CHECK VIP WHITELIST
     if (VIP_EMAILS.includes(emailToCheck.toLowerCase())) {
       logStep("VIP user detected - vitalício access granted", { email: emailToCheck });
