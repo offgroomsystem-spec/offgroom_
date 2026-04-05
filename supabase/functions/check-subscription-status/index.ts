@@ -307,15 +307,35 @@ serve(async (req) => {
           }
 
           logStep("Customer found but no matching subscriptions");
+
+          const localFallbackResponse = await checkLocalSubscriptionFallback();
+          if (localFallbackResponse) {
+            return localFallbackResponse;
+          }
         } else {
           logStep("No Stripe customer found for email", { email: emailToCheck });
+
+          const localFallbackResponse = await checkLocalSubscriptionFallback();
+          if (localFallbackResponse) {
+            return localFallbackResponse;
+          }
         }
       } catch (stripeError) {
         const errorMsg = stripeError instanceof Error ? stripeError.message : String(stripeError);
-        logStep("⚠️ Stripe API error - continuing to other checks", { error: errorMsg });
+        logStep("⚠️ Stripe API error - checking local subscription fallback", { error: errorMsg });
+
+        const localFallbackResponse = await checkLocalSubscriptionFallback();
+        if (localFallbackResponse) {
+          return localFallbackResponse;
+        }
       }
     } else {
       logStep("Warning: STRIPE_SECRET_KEY not configured or invalid");
+
+      const localFallbackResponse = await checkLocalSubscriptionFallback();
+      if (localFallbackResponse) {
+        return localFallbackResponse;
+      }
     }
 
     // 3️⃣ CHECK LIBERAÇÃO MANUAL ATIVA
